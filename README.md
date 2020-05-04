@@ -4,6 +4,6 @@ pip install selenium
 
 pip install pyttsx3
 
-pip install py2exe
+pip install cs_Freeze
 
 still in develop
