@@ -32,9 +32,10 @@ def tts_twitch_start():
 
         for x in range (0, len(Texts)):
             text1 = Texts[x].text
-
+            # if ther is n-word in the text1 the program will be restart
+            # the browser will be refresh 
+            # and if ther is no n-word the programm will be complet working
             texttest = ["nigger", "zin g", "niger","niggest","nibber","niber","n.i.g.g.e.r","n.i.g.e.r"]
-
             if any(word in text1.lower() for word in texttest):
                 driver.refresh()
             else:
