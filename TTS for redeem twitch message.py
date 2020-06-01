@@ -1,52 +1,97 @@
+from PyQt5.QtWidgets import QMainWindow,QApplication
+from PyQt5.QtGui import QIcon
+from PySide2.QtTextToSpeech import QTextToSpeech
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
-import pyttsx3
-from tkinter import *
-
-win = Tk()
-win.title("TTS")
-win.resizable(0,0)
-
-img = PhotoImage(file='tts icon.ico')
-win.tk.call('wm', 'iconphoto', win._w, img)
-
-#get the name of the twitch channel
-Label(win, text="Just enter the twitch channel name").grid()
-entree = Entry(win, width=30)
-entree.grid()
+from main_window_UI_1 import Ui_MainWindow
+#from PyQt5 import QtCore, QtWidgets
+#from os import path
+#from PyQt5.uic import loadUiType
+#import sys
 
 
-def tts_twitch_start():
-    engine = pyttsx3.init('sapi5')
-    voices = engine.getProperty('voices')
-    engine.setProperty('voice',voices[0].id)
-    driver = webdriver.Chrome('D:\Project\Project\Rebot Router\chromedriver11.exe')
-    driver.get("https://www.twitch.tv/" + str(entree.get()))
+#FROM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "main_window_UI_1.ui"))
 
-    #Texts = driver.find_elements_by_xpath('//*[@id="93ef4f4941fdb3dd4d649d57848696d2"]/div/div[1]/div/div/section/div/div[3]/div[2]/div[3]/div/div/div[16]/div/div[2]/div')
-    while True:
-        Texts = driver.find_elements_by_class_name('chat-line__message-body--highlighted')
+FROM_CLASS = Ui_MainWindow
+class MainApp(QMainWindow, FROM_CLASS):
+    def __init__(self, parent=None):
+        super(MainApp, self).__init__(parent)
+        QMainWindow.__init__(self)
+        self.setupUi(self)
+        self.Handel_UI()
+        self.Handel_Buttons()
 
-        def speak(text):
-            engine.say(text)
-            engine.runAndWait()
+        self.engine = None
+        engineNames = QTextToSpeech.availableEngines()
+        if len(engineNames) > 0:
+            engineName = engineNames[0]
+            self.engine = QTextToSpeech(engineName)
+            self.engine.stateChanged.connect(self.stateChanged)
+            self.setWindowTitle('TTS for High-light Message in Twitch')
+            self.setWindowIcon(QIcon('tts icon 2.png'))
+            self.voices = []
+            for voice in self.engine.availableVoices():
+                self.voices.append(voice)
+                self.voiceCombo.addItem(voice.name())
+        else:
+            self.setWindowTitle('TTS for Highlight Message in Twitch (no engines available)')
+            self.sayButton.setEnabled(False)
 
-        for x in range (0, len(Texts)):
-            text1 = Texts[x].text
-            # if ther is n-word in the text1 the program will be restart
-            # the browser will be refresh 
-            # and if ther is no n-word the programm will be complet working
-            texttest = ["nigger", "zin g", "niger","niggest","nibber","niber","n.i.g.g.e.r","n.i.g.e.r"]
-            if any(word in text1.lower() for word in texttest):
-                driver.refresh()
-            else:
-                speak(text1)
-                driver.refresh()
 
 
-Button(win, text= "START",command=tts_twitch_start ).grid()
+    def Handel_UI(self):
+        self.setWindowTitle("TTS for Highlight Message in Twitch asdfg")
+        self.setFixedSize(643, 400)
 
-s = Scale(win, from_ = 0, to=100, orient=HORIZONTAL, length=200, width=10, sliderlength=50)
-s.set(50)
-s.grid()
+    def Handel_Buttons(self):
+        self.pushButton.clicked.connect(self.say)
+        self.actionHelp.triggered.connect(self.help_window)
 
-win.mainloop()
+
+    # place where i write my code
+    # def
+    def say(self):
+        url = self.lineEdit.text()
+
+        driver = webdriver.Chrome(ChromeDriverManager().install())
+        driver.get("https://www.twitch.tv/" + url)
+
+        while True:
+            try:
+                Texts = driver.find_elements_by_class_name('chat-line__message-body--highlighted')
+                for x in range(0, len(Texts)):
+                    text = Texts[x].text
+                    self.engine.setVoice(self.voices[self.voiceCombo.currentIndex()])
+                    self.engine.setVolume(float(self.volumeSlider.value()) / 100)
+                    self.engine.setRate(int(self.rateSlider.value()) / 100)
+
+                    if self.checkBox_username.isChecked():
+                        texttest = ["nigger", "zin g", "niger", "niggest", "nibber", "niber", "n.i.g.g.e.r", "n.i.g.e.r"]
+                        if any(word in text.lower() for word in texttest):
+                            driver.refresh()
+                        else:
+                            self.engine.say(text)
+                            driver.refresh()
+                    else:
+                        self.engine.say(text)
+                        driver.refresh()
+
+            except:
+                pass
+
+    def stateChanged(self, state):
+        if (state == QTextToSpeech.State.Ready):
+            self.sayButton.setEnabled(True)
+
+    def help_window(self):
+        pass
+
+def main():
+    app = QApplication([])
+    MainApplication = MainApp()
+    MainApplication.show()
+    app.exec()
+
+
+if __name__ == '__main__':
+    main()
