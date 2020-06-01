@@ -77,7 +77,7 @@ class MainApp(QMainWindow, FROM_CLASS):
                         driver.refresh()
 
             except:
-                pass
+                break
 
     def stateChanged(self, state):
         if (state == QTextToSpeech.State.Ready):
