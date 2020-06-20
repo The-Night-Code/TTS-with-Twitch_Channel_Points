@@ -1,6 +1,7 @@
 version 1.3
   open only chat 
     url = "https://www.twitch.tv/popout/{}/chat?popout=".format("twitch user name")
+  use another library, and stop using selenium
   add thread < main class , second class >
   add sound if someone use channel points
   change the text under settings
