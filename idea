@@ -7,3 +7,15 @@ version 1.3
   change the text under settings
   
 
+
+
+
+
+thread = threading.Thread(target=thread_class)
+thread.start()
+tttt = thread_class.text
+print(tttt)
+
+
+
+
