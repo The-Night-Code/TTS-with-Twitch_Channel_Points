@@ -16,6 +16,7 @@ thread.start()
 tttt = thread_class.text
 print(tttt)
 
-
-
-
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+pass the value to class "threading" 
+use struct to pass and get data
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
