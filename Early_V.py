@@ -5,7 +5,7 @@ import pyttsx3
 try:
     engine = pyttsx3.init()
     voices = engine.getProperty('voices')
-    url = "https://www.twitch.tv/popout/skinnny/chat?popout="
+    url = "https://www.twitch.tv/popout/    {channel_name}   /chat?popout="
     driver = webdriver.Chrome(ChromeDriverManager().install())
     driver.get(url)
 
