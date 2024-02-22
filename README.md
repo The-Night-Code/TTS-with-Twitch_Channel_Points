@@ -1,4 +1,4 @@
-# TTS-redeeem-twitch-message-chat
+# TTS with Twitch Channel Points
 
 pip install selenium
 
